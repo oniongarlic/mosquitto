@@ -46,7 +46,7 @@ typedef int ssize_t;
 
 #include "config.h"
 
-#if !defined(WIN32) && !defined(__SYMBIAN32__)
+#if !defined(WIN32) && !defined(__SYMBIAN32__) && !defined(__QNX__)
 #define HAVE_PSELECT
 #endif
 
