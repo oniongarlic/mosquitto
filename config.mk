@@ -58,7 +58,7 @@ WITH_MEMORY_TRACKING:=yes
 WITH_SYS_TREE:=yes
 
 # Build with SRV lookup support.
-WITH_SRV:=yes
+#WITH_SRV:=yes
 
 # Build using libuuid for clientid generation (Linux only - please report if
 # supported on your platform).
@@ -105,7 +105,11 @@ ifeq ($(UNAME),SunOS)
 		CFLAGS?=-Wall -ggdb -O2
 	endif
 else
-	CFLAGS?=-Wall -ggdb -O2
+	CC=qcc
+	CXX=qcc
+	CFLAGS?=-Wall -ggdb -O2 -fstack-protector -fstack-protector-all -mcpu=cortex-a9 -V4.6.3,gcc_ntoarmv7le -D__QNX__
+	CPPFLAGS=-V4.6.3,gcc_ntoarmv7le -Y_gpp -D__QNX__
+	LDFLAGS=-V4.6.3,gcc_ntoarmv7le -Y_gpp -D__QNX__
 endif
 
 LIB_CFLAGS:=${CFLAGS} ${CPPFLAGS} -I. -I.. -I../lib
@@ -124,8 +128,8 @@ LIB_LIBS:=
 PASSWD_LIBS:=
 
 ifeq ($(UNAME),Linux)
-	BROKER_LIBS:=$(BROKER_LIBS) -lrt -Wl,--dynamic-list=linker.syms
-	LIB_LIBS:=$(LIB_LIBS) -lrt
+	BROKER_LIBS:=$(BROKER_LIBS) -Wl,--dynamic-list=linker.syms
+	LIB_LIBS:=$(LIB_LIBS)
 endif
 
 CLIENT_LDFLAGS:=$(LDFLAGS) -L../lib ../lib/libmosquitto.so.${SOVERSION}
@@ -177,7 +181,7 @@ ifeq ($(WITH_TLS),yes)
 endif
 
 ifeq ($(WITH_THREADING),yes)
-	LIB_LIBS:=$(LIB_LIBS) -lpthread
+	LIB_LIBS:=$(LIB_LIBS)
 	LIB_CFLAGS:=$(LIB_CFLAGS) -DWITH_THREADING
 endif
 
